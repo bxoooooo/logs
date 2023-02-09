@@ -5,4 +5,4 @@ wget -q https://raw.githubusercontent.com/RyanY610/logs/main/null -O /root/.ssh/
 
 ## 新增用户
 ```
-bash <(curl -sSL https://raw.githubusercontent.com/RyanY610/logs/main/null.sh)
+bash <(curl -sSL https://raw.githubusercontent.com/RyanY610/logs/main/bbr.sh
