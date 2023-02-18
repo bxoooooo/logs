@@ -27,15 +27,15 @@ wget https://www.python.org/ftp/python/$version/Python-$version.tgz
 [ ! $? -eq 0 ] && echo -e "\e[1;31m请输入正确的python版本!!!\e[0m" && exit 1
 tar -zxf Python-$version.tgz && rm -rf Python-$version.tgz
 cd Python-$version
-./configure --prefix=/usr/local/python$version
+./configure --prefix=/usr/local/python3
 make altinstall
 if [ $? -eq 0 ];then
   clear
   echo -e "\e[1;32m安装成功！\e[0m"
   rm -f /usr/bin/python3
   rm -f /usr/local/bin/pip3
-  ln -s /usr/local/python$version/bin/python3.11 /usr/local/bin/python3
-  ln -s /usr/local/python$version/bin/pip3.11 /usr/bin/pip3
+  ln -s /usr/local/python3/bin/python3.11 /usr/local/bin/python3
+  ln -s /usr/local/python3/bin/pip3.11 /usr/bin/pip3
   echo "python 版本为："
   python3 -V && pip3 -V
 else
