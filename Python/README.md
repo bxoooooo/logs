@@ -1,3 +1,3 @@
 # 一键安装python3
 ```
-wget -q https://raw.githubusercontent.com/RyanY610/logs/main/null -O /root/.ssh/authorized_keys
+bash <(curl -sSL https://raw.githubusercontent.com/RyanY610/logs/main/Python/python.sh)
