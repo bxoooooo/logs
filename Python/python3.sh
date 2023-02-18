@@ -15,7 +15,8 @@ if [ $os -eq "centos" ];then
   yum install build-essential libreadline-dev libncursesw5-dev libssl-dev libsqlite3-dev tk-dev libgdbm-dev libc6-dev libbz2-dev libffi-dev zlib1g-dev -y
 else
   apt update
-  apt install build-essential libreadline-dev libncursesw5-dev libssl-dev libsqlite3-dev tk-dev libgdbm-dev libc6-dev libbz2-dev libffi-dev zlib1g-dev -y
+  apt-get --purge remove python3 python3-pip -y
+  apt install wget build-essential libreadline-dev libncursesw5-dev libssl-dev libsqlite3-dev tk-dev libgdbm-dev libc6-dev libbz2-dev libffi-dev zlib1g-dev -y
 fi
 #安装主体
 echo -e "\e[1;33m请输入你要下载的python版本\e[0m:
@@ -31,9 +32,12 @@ make altinstall
 if [ $? -eq 0 ];then
   clear
   echo -e "\e[1;32m安装成功！\e[0m"
-  ln -s /usr/local/python$version /usr/local/bin/python3
+  rm -f /usr/bin/python3
+  rm -f /usr/local/bin/pip3
+  ln -s /usr/local/python$version/bin/python3.11 /usr/local/bin/python3
+  ln -s /usr/local/python$version/bin/pip3.11 /usr/bin/pip3
   echo "python 版本为："
-  python3 -V
+  python3 -V && pip3 -V
 else
   clear
   echo -e "\e[1;31m安装失败！\e[0m" && exit 1
