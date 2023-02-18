@@ -35,7 +35,7 @@ if [ $? -eq 0 ];then
   echo -e "\e[1;32m安装成功！\e[0m"
   rm -f /usr/bin/python3
   rm -f /usr/local/bin/pip3
-  ln -s /usr/local/python3/bin/python3 /usr/local/bin/python3
+  ln -s /usr/local/python3/bin/python3 /usr/bin/python3
   ln -s /usr/local/python3/bin/pip3 /usr/bin/pip3
   python3 -m pip install --upgrade pip
   echo "python 版本为："
