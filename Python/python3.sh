@@ -40,7 +40,6 @@ if [ $? -eq 0 ];then
   rm -f /usr/local/bin/pip3
   ln -s /usr/local/python3/bin/python3 /usr/bin/python3
   ln -s /usr/local/python3/bin/pip3 /usr/bin/pip3
-  python3 -m pip install --upgrade pip
   echo "python 版本为："
   python3 -V && pip3 -V
 else
