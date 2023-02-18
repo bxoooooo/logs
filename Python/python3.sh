@@ -27,8 +27,7 @@ wget https://www.python.org/ftp/python/$version/Python-$version.tgz
 tar -zxf Python-$version.tgz && rm -rf Python-$version.tgz
 cd Python-$version
 ./configure --prefix=/usr/local/python$version
-make
-make install
+make altinstall
 if [ $? -eq 0 ];then
   clear
   echo -e "\e[1;32m安装成功！\e[0m"
