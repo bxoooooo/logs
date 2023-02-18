@@ -37,7 +37,7 @@ if [ $? -eq 0 ];then
   ln -s /usr/local/python$version/bin/python3.11 /usr/local/bin/python3
   ln -s /usr/local/python$version/bin/pip3.11 /usr/bin/pip3
   echo "python 版本为："
-  python3 -V
+  python3 -V && pip3 -V
 else
   clear
   echo -e "\e[1;31m安装失败！\e[0m" && exit 1
