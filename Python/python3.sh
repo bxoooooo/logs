@@ -42,6 +42,7 @@ if [ $? -eq 0 ];then
   ln -s /usr/local/python3/bin/pip3 /usr/local/bin/pip3
   echo "python 版本为："
   python3 -V && pip3 -V
+  rm -rf Python-$version.tgz && rm -rf Python-$version
 else
   clear
   echo -e "\e[1;31m安装失败！\e[0m" && exit 1
