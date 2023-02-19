@@ -1,20 +1,20 @@
 #! /bin/bash
 #系统检测
-if [[ ! -z "cat /etc/issue | grep -iE "debian"" ]]; then
-  os='debian'
-elif [[ ! -z "cat /etc/issue | grep -iE "ubuntu"" ]]; then
-  os='ubuntu'
-elif [[ ! -z "cat /etc/redhat-release | grep -iE "CentOS"" ]]; then
-  os='centos'
+if [[ ! -z "`cat /etc/issue | grep -iE "debian"`" ]]; then
+  os="debian"
+elif [[ ! -z "`cat /etc/issue | grep -iE "ubuntu"`" ]]; then
+  os="ubuntu"
+elif [[ ! -z "`cat /etc/redhat-release | grep -iE "CentOS"`" ]]; then
+  os="centos"
 else
-  echo -e "${RED}很抱歉，你的系统不受支持!${END}" && exit 1
+  echo -e "${RED}很抱歉，你的系统不受支持!" && exit 1
 fi
 #安装相关依赖
-if [ $os -eq "centos" ];then
-  yum update
+if [[ $os == "centos" ]];then
+  yum update -y
   rpm -qa|grep python3|xargs rpm -ev --allmatches --nodeps
   whereis python3 |xargs rm -frv
-  yum install wget yum-utils -y
+  yum install -y wget yum-utils make
   yum-builddep python3 -y
 else
   apt update
@@ -38,8 +38,8 @@ if [ $? -eq 0 ];then
   echo -e "\e[1;32m安装成功！\e[0m"
   rm -f /usr/bin/python3
   rm -f /usr/bin/pip3
-  ln -s /usr/local/python3/bin/python3 /usr/bin/python3
-  ln -s /usr/local/python3/bin/pip3 /usr/bin/pip3
+  ln -s /usr/local/python3/bin/python3 /usr/local/bin/python3
+  ln -s /usr/local/python3/bin/pip3 /usr/local/bin/pip3
   echo "python 版本为："
   python3 -V && pip3 -V
 else
