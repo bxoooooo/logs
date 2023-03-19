@@ -341,8 +341,8 @@ uninstall() {
 menu() {
     clear
     echo "#############################################################"
-    echo -e "#                   ${RED}欢迎使用Acme证书一键申请脚本${PLAIN}#"
-    echo -e "#                   ${GREEN}作者:${PLAIN} ${BLUE}你挺能闹啊${PLAIN}#"
+    echo -e "#                   ${RED}欢迎使用Acme证书一键申请脚本${PLAIN} #"
+    echo -e "#                   ${GREEN}作者:${PLAIN} ${RED}你挺能闹啊${PLAIN} #"
     echo "#############################################################"
     echo ""
     echo -e " ${GREEN}1.${PLAIN} 安装 Acme.sh 域名证书申请脚本"
