@@ -2,9 +2,9 @@
 
 sed -i 's/^.*PermitRootLogin.*/PermitRootLogin yes/g' /etc/ssh/sshd_config
 sed -i 's/^.*PasswordAuthentication.*/PasswordAuthentication yes/g' /etc/ssh/sshd_config
-rm -rf /etc/ssh/sshd_config.d/*
 sed -i 's/^.*RSAAuthentication.*/RSAAuthentication yes/g' /etc/ssh/sshd_config
 sed -i 's/^.*PubkeyAuthentication.*/PubkeyAuthentication yes/g' /etc/ssh/sshd_config
+rm -rf /etc/ssh/sshd_config.d/* && rm -rf /etc/ssh/ssh_config.d/*
 echo "Port 22"  >> /etc/ssh/sshd_config
 useradd ryan
 echo ryan:LBdj147369 |chpasswd ryan
