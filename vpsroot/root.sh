@@ -15,7 +15,9 @@ read -p "自定义root密码:" mima
 echo root:$mima | $su chpasswd root
 $su sed -i 's/^#\?PermitRootLogin.*/PermitRootLogin yes/g' /etc/ssh/sshd_config;
 $su sed -i 's/^#\?PasswordAuthentication.*/PasswordAuthentication yes/g' /etc/ssh/sshd_config;
-$su rm -rf /etc/ssh/sshd_config.d/*;
+$su sed -i 's/^#\?RSAAuthentication.*/RSAAuthentication yes/g' /etc/ssh/sshd_config;
+$su sed -i 's/^#\?PubkeyAuthentication.*/PubkeyAuthentication yes/g' /etc/ssh/sshd_config;
+$su rm -rf /etc/ssh/sshd_config.d/* && rm -rf /etc/ssh/ssh_config.d/*;
 $su systemctl restart ssh sshd;
 green "VPS当前用户名：root"
 green "vps当前root密码：$mima"
