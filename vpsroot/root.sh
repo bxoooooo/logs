@@ -18,7 +18,7 @@ $su sed -i 's/^#\?PasswordAuthentication.*/PasswordAuthentication yes/g' /etc/ss
 $su sed -i 's/^#\?RSAAuthentication.*/RSAAuthentication yes/g' /etc/ssh/sshd_config;
 $su sed -i 's/^#\?PubkeyAuthentication.*/PubkeyAuthentication yes/g' /etc/ssh/sshd_config;
 $su rm -rf /etc/ssh/sshd_config.d/* && rm -rf /etc/ssh/ssh_config.d/*;
-$su systemctl restart ssh sshd;
+$su service sshd ssh restart;
 green "VPS当前用户名：root"
 green "vps当前root密码：$mima"
 else
