@@ -95,7 +95,7 @@ install_acme(){
     back2menu
 }
 
-mkdir -p /var/ssl/ssl
+mkdir -p /etc/ssl/ssl
 
 check_80(){
 
