@@ -1,6 +1,6 @@
-# 一键安装ssh密钥
+# 下载一键备份脚本
 ```
-bash <(curl -sSL https://raw.githubusercontent.com/RyanY610/logs/main/Key/null.sh)
+wget https://raw.githubusercontent.com/RyanY610/logs/main/db_backup/bk_mysql.sh
 ```
 
-# 新增用户
+# 。
