@@ -1,4 +1,3 @@
-cat <<'EOF' > /opt/db_backup.sh
 #!/bin/bash
 #删除2天以前备份
 
@@ -61,4 +60,3 @@ echo "备份结束,结果查看 $backup_log"
 du $backup_path/*$date* -sh | awk '{print "文件:" $2 ",大小:" $1}'
 
 gdrive sync upload  --keep-local --delete-extraneous /opt/db_backup 1M8u9L1N7zIZNm-VTbn6cJt9XrDDBtygt
-EOF
