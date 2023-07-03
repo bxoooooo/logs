@@ -13,7 +13,6 @@ services:
       - /etc/ssl/ssl:/etc/ssl/ssl
       - /etc/nginx/conf.d:/etc/nginx/conf.d
     depends_on:
-      - mysql
       - php7.4
       - php8.1
     networks:
