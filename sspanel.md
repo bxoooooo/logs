@@ -11,6 +11,7 @@ curl --insecure -fsSL https://cdn.jsdelivr.net/gh/midoks/mdserver-web@latest/scr
 - OpenResty
 - PHP 8.1
 - MariaDB
+
 注意请选择快速安装(apt)，在面板首页直接安装，去软件管理页面安装，首页直接安装是编译安装，需要很长时间
 
 环境安装完毕后开始安装php扩展
@@ -18,6 +19,7 @@ curl --insecure -fsSL https://cdn.jsdelivr.net/gh/midoks/mdserver-web@latest/scr
 - bcmath
 - zip
 - ioncube
+
 手动安装ioncube，注意区分架构
 ## 查看架构命令
 ```
