@@ -1,9 +1,11 @@
-?> 教程使用的环境：CentOS Stream 9/x86_64 架构
+ 教程使用的环境：MWserver(金灵面板) x86_64 架构
 
-## 安装 OneinStack
+## 安装 MWserver
 
 OneinStack 官方网站：https://oneinstack.com/ 。使用 https://oneinstack.com/auto/ 指定一个客制化的安装方案，以下为推荐使用的软件及其版本：
-
+## 一键脚本
+```bash
+curl --insecure -fsSL https://cdn.jsdelivr.net/gh/midoks/mdserver-web@latest/scripts/install.sh | bash
 - Nginx
 - PHP 8.2 with OPcache
 - MariaDB 10.6
