@@ -2,18 +2,26 @@
 
 ## 安装 MWserver
 
-OneinStack 官方网站：https://oneinstack.com/ 。使用 https://oneinstack.com/auto/ 指定一个客制化的安装方案，以下为推荐使用的软件及其版本：
+MWserver 项目地址：https://github.com/midoks/mdserver-web
 ## 一键脚本
 ```
 curl --insecure -fsSL https://cdn.jsdelivr.net/gh/midoks/mdserver-web@latest/scripts/install.sh | bash
 ```
-- Nginx
-- PHP 8.2 with OPcache
-- MariaDB 10.6
-- phpMyAdmin
+面板安装完毕后访问面板安装LNMP环境
+- OpenResty
+- PHP 8.1
+- MariaDB
+注意请选择快速安装(apt)，在面板首页直接安装，去软件管理页面安装，首页直接安装是编译安装，需要很长时间
 
-?> 所有 OneinStack 支持系统版本均可使用此教程安装
-
+环境安装完毕后开始安装php扩展
+软件管理->已安装->php->安装扩展
+- bcmath
+- zip
+## 以及手动安装ioncube
+- x86_64
+```
+wget http://downloads3.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64.tar.gz && tar xvf ioncube_loaders_lin_x86-64.tar.gz && cp ioncube/ioncube_loader_lin_8.1.so /usr/lib/php/20210902/ioncube_loader_lin_8.1.so && echo "zend_extension = /usr/lib/php/20210902/ioncube_loader_lin_8.1.so" > /etc/php/8.1/cli/conf.d/00-ioncube.ini && echo "zend_extension = /usr/lib/php/20210902/ioncube_loader_lin_8.1.so" > /etc/php/8.1/fpm/conf.d/00-ioncube.ini && rm -rf ioncabe ioncube_loaders_lin_x86-64.tar.gz
+```
 ## 部署 SSPanel UIM
 
 安装完毕之后，在安装指令执行的目录下应存在一个 `oneinstack` 目录，前往该目录创建新站点：
