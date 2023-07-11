@@ -17,6 +17,7 @@ curl --insecure -fsSL https://cdn.jsdelivr.net/gh/midoks/mdserver-web@latest/scr
 软件管理->已安装->php->安装扩展
 - bcmath
 - zip
+
 以及手动安装ioncube，注意区分架构
 ## 查看架构命令
 ```
