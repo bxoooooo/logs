@@ -26,9 +26,9 @@ uname -m
 ```
 wget http://downloads3.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64.tar.gz && tar xvf ioncube_loaders_lin_x86-64.tar.gz && cp ioncube/ioncube_loader_lin_8.1.so /usr/lib/php/20210902/ioncube_loader_lin_8.1.so && echo "zend_extension = /usr/lib/php/20210902/ioncube_loader_lin_8.1.so" > /etc/php/8.1/cli/conf.d/00-ioncube.ini && echo "zend_extension = /usr/lib/php/20210902/ioncube_loader_lin_8.1.so" > /etc/php/8.1/fpm/conf.d/00-ioncube.ini && rm -rf ioncabe ioncube_loaders_lin_x86-64.tar.gz
 ```
--aarch64
+- aarch64
 ```
-
+wget http://downloads3.ioncube.com/loader_downloads/ioncube_loaders_lin_aarch64.tar.gz && tar xvf ioncube_loaders_lin_aarch64.tar.gz && cp ioncube/ioncube_loader_lin_8.1.so /usr/lib/php/20210902/ioncube_loader_lin_8.1.so && echo "zend_extension = /usr/lib/php/20210902/ioncube_loader_lin_8.1.so" > /etc/php/8.1/cli/conf.d/00-ioncube.ini && echo "zend_extension = /usr/lib/php/20210902/ioncube_loader_lin_8.1.so" > /etc/php/8.1/fpm/conf.d/00-ioncube.ini && rm -rf ioncabe ioncube_loaders_lin_x86-64.tar.gz
 ```
 ## 部署 SSPanel UIM
 
