@@ -31,13 +31,31 @@ wget http://downloads3.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64.t
 ```
 wget http://downloads3.ioncube.com/loader_downloads/ioncube_loaders_lin_aarch64.tar.gz && tar xvf ioncube_loaders_lin_aarch64.tar.gz && cp ioncube/ioncube_loader_lin_8.1.so /usr/lib/php/20210902/ioncube_loader_lin_8.1.so && echo "zend_extension = /usr/lib/php/20210902/ioncube_loader_lin_8.1.so" > /etc/php/8.1/cli/conf.d/00-ioncube.ini && echo "zend_extension = /usr/lib/php/20210902/ioncube_loader_lin_8.1.so" > /etc/php/8.1/fpm/conf.d/00-ioncube.ini && rm -rf ioncabe ioncube_loaders_lin_x86-64.tar.gz
 ```
+扩展安装完毕后从MWserver重启php
+
 ## 部署 SSPanel UIM
-
-安装完毕之后，在安装指令执行的目录下应存在一个 `oneinstack` 目录，前往该目录创建新站点：
-
-```bash
-cd oneinstack
-./vhost.sh
+MWserver->网站->添加站点，这一步不用教了吧
+然后ssh登录你的vps，cd进你添加的站点目录后删除所有文件
+```
+rm -rf *
+```
+从仓库拉取源码
+```
+git clone -b 2023.3 https://github.com/Anankke/SSPanel-Uim.git .
+```
+## 安装composer
+```
+wget https://getcomposer.org/download/latest-stable/composer.phar -O /usr/local/bin/composer && chmod +x /usr/local/bin/composer
+```
+## 安装php依赖
+```
+composer install
+```
+## 编辑网站配置
+```
+cp config/.config.example.php config/.config.php
+cp config/appprofile.example.php config/appprofile.php
+vi config/.config.php
 ```
 
 在加密选择的部分，如果是不加 CDN 则可使用 `Let's Encrypt` 证书，如网站需要加设 CDN 例如 Cloudfalre 等，则使用自签证书即可。
