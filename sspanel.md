@@ -47,6 +47,8 @@ git clone -b 2023.3 https://github.com/Anankke/SSPanel-Uim.git .
 ```
 wget https://getcomposer.org/download/latest-stable/composer.phar -O /usr/local/bin/composer && chmod +x /usr/local/bin/composer
 ```
+## 创建数据库
+MWserver->软件管理->MariaDB->管理列表->添加数据库
 ## 安装php依赖
 ```
 composer install
@@ -73,34 +75,18 @@ $_ENV['db_collation'] = 'utf8mb4_unicode_ci';
 $_ENV['db_prefix']    = '';
 ```
 
-编辑 php.ini，删除 disable_functions 中的 proc_open, proc_get_status
-
-```bash
-vi /usr/local/php/etc/php.ini
+## 站点初始化设置
 ```
-
-重启php服务：
-
-```bash
-service php-fpm restart
+php xcat Migration new
 ```
-
-虚拟主机设置完成后，前往你所设置的网站根目录文件夹，执行以下命令：
-
-```bash
-git clone -b 2023.3 https://github.com/Anankke/SSPanel-Uim.git .
-wget https://getcomposer.org/installer -O composer.phar
-php composer.phar
-php composer.phar install --no-dev
 ```
-
-?> 这里的 2023.3 代表的是 SSPanel UIM 的版本，你可以在 [Release](https://github.com/Anankke/SSPanel-Uim/releases) 页面中查看当前的最新稳定版本或者是输入 dev 使用开发版。请注意，dev 分支可能在使用过程中出现不可预知的问题。
-
-修改 Nginx vhost 配置文件
-
-```bash
-vi /usr/local/nginx/conf/vhost/你设置的网站域名.conf
-systemctl nginx restart
+php xcat Tool importAllSettings
+```
+```
+php xcat Tool createAdmin
+```
+```
+php xcat ClientDownload
 ```
 
 在对应的 vhost 的配置文件中添加如下伪静态规则，并将网站目录（即 `root` 配置项）后添加 `/public`
