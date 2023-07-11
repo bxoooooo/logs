@@ -35,6 +35,9 @@ wget http://downloads3.ioncube.com/loader_downloads/ioncube_loaders_lin_aarch64.
 ```
 扩展安装完毕后从MWserver重启php
 
+## 创建数据库
+MWserver->软件管理->MariaDB->管理列表->添加数据库
+
 ## 部署 SSPanel UIM
 MWserver->网站->添加站点，这一步不用教了吧
 然后ssh登录你的vps，cd进你添加的站点目录后删除所有文件
@@ -49,8 +52,7 @@ git clone -b 2023.3 https://github.com/Anankke/SSPanel-Uim.git .
 ```
 wget https://getcomposer.org/download/latest-stable/composer.phar -O /usr/local/bin/composer && chmod +x /usr/local/bin/composer
 ```
-## 创建数据库
-MWserver->软件管理->MariaDB->管理列表->添加数据库
+
 ## 安装php依赖
 ```
 composer install
