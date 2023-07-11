@@ -55,10 +55,23 @@ composer install
 ```
 cp config/.config.example.php config/.config.php
 cp config/appprofile.example.php config/appprofile.php
-vi config/.config.php
+vim config/.config.php
 ```
-
-在加密选择的部分，如果是不加 CDN 则可使用 `Let's Encrypt` 证书，如网站需要加设 CDN 例如 Cloudfalre 等，则使用自签证书即可。
+只需要修改数据库相关信息即可，注意在MWserver查看数据库端口
+## 示例
+```
+$_ENV['db_driver']    = 'mysql';
+$_ENV['db_host']      = '127.0.0.1';
+$_ENV['db_socket']    = '';
+$_ENV['db_database']  = 'sspanel';           //数据库名
+$_ENV['db_username']  = 'sspanel';              //数据库用户名
+$_ENV['db_password']  = 'sspanel';           //用户名对应的密码
+$_ENV['db_port']      = '33106';              //端口
+#高级
+$_ENV['db_charset']   = 'utf8mb4';
+$_ENV['db_collation'] = 'utf8mb4_unicode_ci';
+$_ENV['db_prefix']    = '';
+```
 
 编辑 php.ini，删除 disable_functions 中的 proc_open, proc_get_status
 
