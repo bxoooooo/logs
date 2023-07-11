@@ -89,52 +89,29 @@ php xcat Tool createAdmin
 php xcat ClientDownload
 ```
 
-在对应的 vhost 的配置文件中添加如下伪静态规则，并将网站目录（即 `root` 配置项）后添加 `/public`
-
-```nginx
+## 设置网站目录伪静态并配置ssl证书
+MWserver->网站->你的站点域名->网站目录
+取消勾选[防跨站攻击]并设置运行目录为"/public"然后保存
+在伪静态一栏中填入下列代码
+```
 location / {
     try_files $uri /index.php$is_args$args;
 }
 ```
 
-然后设置网站目录的整体权限
+在ssl一栏中申请域名证书并开启强制https
 
-```bash
-chmod -R 755 /path/to/your/site
-chown -R www:www /path/to/your/site
+## 配置计划任务
+MWserver->计划任务
+- 任务类型 shell脚本
+- 任务名称 sspanel
+- 执行周期 选择N分钟 5分钟
+- 脚本内容
+```
+php /www/wwwroot/你的域名/xcat  Cron
 ```
 
-完成后我们就可以创建数据库和对应的用户了，这步强烈建议使用非root用户并且限制该用户仅可访问对应的网站数据库。
-
-?> 通过 http://服务器IP/phpMyAdmin 可以登录数据库，进行可视化的数据库操作。请务必在完成所有必要的数据库操作后删除或者改名位于 `/data/wwwroot/dafault` 下的 `phpMyAdmin` 目录以避免安全问题。
-
-接下来编辑网站配置文件，将刚才设置的数据库连接信息填入其中，然后阅读其他配置的说明进行站点客制化。
-
-```bash
-cp config/.config.example.php config/.config.php
-cp config/appprofile.example.php config/appprofile.php
-vi config/.config.php
-```
-
-?> 按 i 键进入编辑模式，使用 :x 保存并退出 vi，使用 :q! 放弃任何改动并退出 vi。
-
-接下来执行如下站点初始化设置
-
-```bash
-php xcat Migration new
-php xcat Tool importAllSettings
-php xcat Tool createAdmin
-php xcat ClientDownload
-```
-
-如果你希望使用 Maxmind GeoLite2 数据库来提供 IP 地理位置信息，首先你需要配置 `config/.config.php` 中的 `maxmind_license_key` 选项，然后执行如下命令：
-
-```bash
-php xcat Update
-```
-
-使用 `crontab -e` 指令设置 SSPanel 的基本 cron 任务：
-
-```bash
-*/5 * * * * /usr/local/php/bin/php /path/to/your/site/xcat  Cron
-```
+## 设置网站目录权限
+MWserver->文件->你的sspanel目录
+权限循环设置755和www
+然后你就可以访问你的sspanel网站了
