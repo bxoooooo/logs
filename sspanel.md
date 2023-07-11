@@ -6,6 +6,7 @@ OneinStack 官方网站：https://oneinstack.com/ 。使用 https://oneinstack.c
 ## 一键脚本
 ```
 curl --insecure -fsSL https://cdn.jsdelivr.net/gh/midoks/mdserver-web@latest/scripts/install.sh | bash
+```
 - Nginx
 - PHP 8.2 with OPcache
 - MariaDB 10.6
