@@ -6,7 +6,7 @@ set -o nounset             #引用未初始化变量时退出
 #set -o errexit             #执行shell命令遇到错误时退出
 
 user="root"
-password="ryan1995"
+password="lbdj147369"
 host="localhost"
 port="3306"
 #需备份的数据库，用空格分开
