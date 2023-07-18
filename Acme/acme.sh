@@ -4,17 +4,6 @@ RED="\033[31m"
 GREEN="\033[32m"
 YELLOW="\033[33m"
 NC="\033[0m"
-red(){
-    echo -e "\033[31m\033[01m$1\033[0m"
-}
-
-green(){
-    echo -e "\033[32m\033[01m$1\033[0m"
-}
-
-yellow(){
-    echo -e "\033[33m\033[01m$1\033[0m"
-}
 
 REGEX=("debian" "ubuntu" "centos|red hat|kernel|oracle linux|alma|rocky" "'amazon linux'" "fedora")
 RELEASE=("Debian" "Ubuntu" "CentOS" "CentOS" "Fedora")
@@ -23,7 +12,7 @@ PACKAGE_INSTALL=("apt -y install" "apt -y install" "yum -y install" "yum -y inst
 PACKAGE_REMOVE=("apt -y remove" "apt -y remove" "yum -y remove" "yum -y remove" "yum -y remove")
 PACKAGE_UNINSTALL=("apt -y autoremove" "apt -y autoremove" "yum -y autoremove" "yum -y autoremove" "yum -y autoremove")
 
-[[ $EUID -ne 0 ]] && red "注意：请在root用户下运行脚本" && exit 1
+[[ $EUID -ne 0 ]] && echo -e "${RED}注意：请在root用户下运行脚本${NC}" && exit 1
 
 CMD=("$(grep -i pretty_name /etc/os-release 2>/dev/null | cut -d \" -f2)" "$(hostnamectl 2>/dev/null | grep -i system | cut -d : -f2)" "$(lsb_release -sd 2>/dev/null)" "$(grep -i description /etc/lsb-release 2>/dev/null | cut -d \" -f2)" "$(grep . /etc/redhat-release 2>/dev/null)" "$(grep . /etc/issue 2>/dev/null | cut -d \\ -f1 | sed '/^[ ]*$/d')")
 
@@ -43,11 +32,11 @@ for ((int = 0; int < ${#REGEX[@]}; int++)); do
     fi
 done
 
-[[ -z $SYSTEM ]] && red "不支持当前VPS系统, 请使用主流的操作系统" && exit 1
+[[ -z $SYSTEM ]] && echo -e "${RED}不支持当前VPS系统, 请使用主流的操作系统${NC}" && exit 1
 
 back2menu() {
     echo ""
-    green "所选命令操作执行完成"
+    echo -e "${GREEN}所选命令操作执行完成${NC}"
     read -rp "请输入“y”退出, 或按任意键回到主菜单：" back2menuInput
     case "$back2menuInput" in
         y) exit 1 ;;
@@ -77,7 +66,7 @@ install_acme(){
     if [[ -z $acmeEmail ]]; then
         autoEmail=$(date +%s%N | md5sum | cut -c 1-16)
         acmeEmail=$autoEmail@gmail.com
-        yellow "已取消设置邮箱, 使用自动生成的gmail邮箱: $acmeEmail"
+        echo -e "${YELLOW}已取消设置邮箱, 使用自动生成的gmail邮箱: $acmeEmail${NC}"
     fi
     curl https://get.acme.sh | sh -s email=$acmeEmail
     source ~/.bashrc
@@ -86,10 +75,10 @@ install_acme(){
     if [[ -n $(~/.acme.sh/acme.sh -v 2>/dev/null) ]]; then
         echo -e "${GREEN}Acme.sh证书申请脚本安装成功!${NC}"
     else
-        red "抱歉, Acme.sh证书申请脚本安装失败"
-        green "建议如下："
-        yellow "1. 检查VPS的网络环境"
-        yellow "2. 脚本可能跟不上时代, 请更换其他脚本"
+        echo -e "${RED}抱歉, Acme.sh证书申请脚本安装失败${NC}"
+        echo -e "${GREEN}建议如下：${NC}"
+        echo -e "${YELLOW}1. 检查VPS的网络环境${NC}"
+        echo -e "${YELLOW}2. 脚本可能跟不上时代, 请更换其他脚本${NC}"
     fi
     back2menu
 }
@@ -103,14 +92,14 @@ check_80(){
         ${PACKAGE_INSTALL[int]} lsof
     fi
     
-    yellow "正在检测80端口是否占用..."
+    echo -e "${YELLOW}正在检测80端口是否占用...${NC}"
     sleep 1
     
     if [[  $(lsof -i:"80" | grep -i -c "listen") -eq 0 ]]; then
         echo -e "${GREEN}检测到目前80端口未被占用${NC}"
         sleep 1
     else
-        red "检测到目前80端口被其他程序被占用，以下为占用程序信息"
+        echo -e "${RED}检测到目前80端口被其他程序被占用，以下为占用程序信息${NC}"
         lsof -i:"80"
         read -rp "如需结束占用进程请按Y，按其他键则退出 [Y/N]: " yn
         if [[ $yn =~ "Y"|"y" ]]; then
@@ -123,7 +112,7 @@ check_80(){
 }
 
 acme_standalone(){
-    [[ -z $(~/.acme.sh/acme.sh -v 2>/dev/null) ]] && red "未安装acme.sh, 无法执行操作" && exit 1
+    [[ -z $(~/.acme.sh/acme.sh -v 2>/dev/null) ]] && echo -e "${RED}未安装acme.sh, 无法执行操作${NC}" && exit 1
     check_80
     WARPv4Status=$(curl -s4m8 https://www.cloudflare.com/cdn-cgi/trace -k | grep warp | cut -d= -f2)
     WARPv6Status=$(curl -s6m8 https://www.cloudflare.com/cdn-cgi/trace -k | grep warp | cut -d= -f2)
@@ -136,7 +125,7 @@ acme_standalone(){
     ipv6=$(curl -s6m8 ip.p3terx.com -k | sed -n 1p)
     
     echo ""
-    yellow "在使用80端口申请模式时, 请先将您的域名解析至你的VPS的真实IP地址, 否则会导致证书申请失败"
+    echo -e "${YELLOW}在使用80端口申请模式时, 请先将您的域名解析至你的VPS的真实IP地址, 否则会导致证书申请失败${NC}"
     echo ""
     if [[ -n $ipv4 && -n $ipv6 ]]; then
         echo -e "VPS的真实IPv4地址为: ${GREEN} $ipv4 ${NC}"
@@ -148,13 +137,9 @@ acme_standalone(){
     fi
     echo ""
     read -rp "请输入解析完成的域名: " domain
-    [[ -z $domain ]] && red "未输入域名，无法执行操作！" && exit 1
-    green "已输入的域名：$domain" && sleep 1
+    [[ -z $domain ]] && echo -e "${RED}未输入域名，无法执行操作！${NC}" && exit 1
+    echo -e "${GREEN}已输入的域名：$domain ${NC}" && sleep 1
     domainIP=$(curl -sm8 ipget.net/?ip="${domain}")
-    
-    read -rp "请输入证书安装路径: " cert1path
-    [[ -z $cert1path ]] && red "未输入证书安装路径，无法执行操作！" && exit 1
-    export CERT1PATH="$cert1path"
     
     if [[ $domainIP == $ipv6 ]]; then
         bash ~/.acme.sh/acme.sh --issue -d ${domain} --standalone --listen-v6 --insecure
@@ -170,7 +155,7 @@ acme_standalone(){
         if [[ -a "/opt/warp-go/warp-go" ]]; then
             systemctl start warp-go 
         fi
-        yellow "域名解析失败, 请检查域名是否正确填写或等待解析完成再执行脚本"
+        echo -e "${RED}域名解析失败, 请检查域名是否正确填写或等待解析完成再执行脚本${NC}"
         exit 1
     elif [[ -n $(echo $domainIP | grep ":") || -n $(echo $domainIP | grep ".") ]]; then
         if [[ $domainIP != $ipv4 ]] && [[ $domainIP != $ipv6 ]]; then
@@ -180,16 +165,19 @@ acme_standalone(){
             if [[ -a "/opt/warp-go/warp-go" ]]; then
                 systemctl start warp-go 
             fi
-            green "域名 ${domain} 目前解析的IP: ($domainIP)"
-            red "当前域名解析的IP与当前VPS使用的真实IP不匹配"
-            green "建议如下："
-            yellow "1. 请确保CloudFlare小云朵为关闭状态(仅限DNS), 其他域名解析或CDN网站设置同理"
-            yellow "2. 请检查DNS解析设置的IP是否为VPS的真实IP"
-            yellow "3. 脚本可能跟不上时代, 建议更换其他的脚本"
+            echo -e "${GREEN}域名 ${domain} 目前解析的IP: ($domainIP) ${NC}"
+            echo -e "${RED}当前域名解析的IP与当前VPS使用的真实IP不匹配${NC}"
+            echo -e "${GREEN}建议如下：${NC}"
+            echo -e "${YELLOW}1. 请确保CloudFlare小云朵为关闭状态(仅限DNS), 其他域名解析或CDN网站设置同理${NC}"
+            echo -e "${YELLOW}2. 请检查DNS解析设置的IP是否为VPS的真实IP${NC}"
+            echo -e "${YELLOW}3. 脚本可能跟不上时代, 建议更换其他的脚本${NC}"
             exit 1
         fi
     fi
-    
+
+    read -rp "请输入证书安装路径: " cert1path
+    [[ -z $cert1path ]] && echo -e "${RED}未输入证书安装路径，无法执行操作！${NC}" && exit 1
+    export CERT1PATH="$cert1path"
     mkdir -p $CERT1PATH/${domain}
     
     bash ~/.acme.sh/acme.sh --install-cert -d ${domain} --key-file "$CERT1PATH"/${domain}/key.pem --fullchain-file "$CERT1PATH"/${domain}/cert.pem
@@ -197,34 +185,30 @@ acme_standalone(){
 }
 
 acme_cfapiNTLD() {
-    [[ -z $(~/.acme.sh/acme.sh -v 2>/dev/null) ]] && red "未安装acme.sh，无法执行操作" && exit 1
+    [[ -z $(~/.acme.sh/acme.sh -v 2>/dev/null) ]] && echo -e "${RED}未安装acme.sh，无法执行操作${NC}" && exit 1
     ipv4=$(curl -s4m8 ip.p3terx.com -k | sed -n 1p)
     ipv6=$(curl -s6m8 ip.p3terx.com -k | sed -n 1p)
 
     domains=()
     read -rp "请输入需要申请的域名数量: " domains_count
-    [[ ! $domains_count =~ ^[1-99][0-99]*$ ]] && red "请输入有效的域名数量！" && exit 1
+    [[ ! $domains_count =~ ^[1-99][0-99]*$ ]] && echo -e "${RED}请输入有效的域名数量！${NC}" && exit 1
     for ((i=1; i<=domains_count; i++)); do
         read -rp "请输入第 $i 个域名 (例如：domain.com): " domain
         domains+=("$domain")
     done
 
     read -rp "请输入 Cloudflare Global API Key: " cf_key
-    [[ -z $cf_key ]] && red "未输入 Cloudflare Global API Key，无法执行操作！" && exit 1
+    [[ -z $cf_key ]] && echo -e "${RED}未输入 Cloudflare Global API Key，无法执行操作！${NC}" && exit 1
     export CF_Key="$cf_key"
     read -rp "请输入 Cloudflare 的登录邮箱: " cf_email
-    [[ -z $cf_email ]] && red "未输入 Cloudflare 的登录邮箱，无法执行操作!" && exit 1
+    [[ -z $cf_email ]] && echo -e "${RED}未输入 Cloudflare 的登录邮箱，无法执行操作!${NC}" && exit 1
     export CF_Email="$cf_email"
     read -rp "请输入 Cloudflare Token: " cf_token
-    [[ -z $cf_token ]] && red "未输入 Cloudflare Token，无法执行操作！" && exit 1
+    [[ -z $cf_token ]] && echo -e "${RED}未输入 Cloudflare Token，无法执行操作！${NC}" && exit 1
     export CF_Token="$cf_token"
     read -rp "请输入 Cloudflare Account ID: " cf_account_id
-    [[ -z $cf_account_id ]] && red "未输入 Cloudflare Account ID，无法执行操作！" && exit 1
+    [[ -z $cf_account_id ]] && echo -e "${RED}未输入 Cloudflare Account ID，无法执行操作！${NC}" && exit 1
     export CF_Account_ID="$cf_account_id"
-    
-    read -rp "请输入证书安装路径: " cert3path
-    [[ -z $cert3path ]] && red "未输入证书安装路径，无法执行操作！" && exit 1
-    export CERT3PATH="$cert3path"
     
     first_domain="${domains[0]}"
     acme_domains=""
@@ -238,6 +222,9 @@ acme_cfapiNTLD() {
         bash ~/.acme.sh/acme.sh --issue --dns dns_cf --insecure $acme_domains
     fi
 
+    read -rp "请输入证书安装路径: " cert3path
+    [[ -z $cert3path ]] && echo -e "${RED}未输入证书安装路径，无法执行操作！${NC}" && exit 1
+    export CERT3PATH="$cert3path"
     mkdir -p $CERT3PATH/$first_domain
 
     for domain in "${domains[@]}"; do
@@ -274,10 +261,10 @@ check1tls() {
             if [[ -a "/opt/warp-go/warp-go" ]]; then
                 systemctl start warp-go 
             fi
-            red "很抱歉，证书申请失败"
-            green "建议如下: "
-            yellow "1. 自行检查dns_api信息是否正确"
-            yellow "2. 脚本可能跟不上时代, 建议更换其他脚本"
+            echo -e "${RED}很抱歉，证书申请失败${NC}"
+            echo -e "${GREEN}建议如下: ${NC}"
+            echo -e "${YELLOW}1. 自行检查dns_api信息是否正确${NC}"
+            echo -e "${YELLOW}2. 脚本可能跟不上时代, 建议更换其他脚本${NC}"
             back2menu
         fi
     fi
@@ -309,40 +296,40 @@ checktls() {
             if [[ -a "/opt/warp-go/warp-go" ]]; then
                 systemctl start warp-go 
             fi
-            red "很抱歉，证书申请失败"
-            green "建议如下: "
-            yellow "1. 自行检测防火墙是否打开, 如使用80端口申请模式时, 请关闭防火墙或放行80端口"
-            yellow "2. 同一域名多次申请可能会触发Let's Encrypt官方风控, 请尝试使用脚本菜单的9选项更换证书颁发机构, 再重试申请证书, 或更换域名、或等待7天后再尝试执行脚本"
-            yellow "3. 脚本可能跟不上时代, 建议更换其他脚本"
+            echo -e "${RED}很抱歉，证书申请失败${NC}"
+            echo -e "${GREEN}建议如下: ${NC}"
+            echo -e "${YELLOW}1. 自行检测防火墙是否打开, 如使用80端口申请模式时, 请关闭防火墙或放行80端口${NC}"
+            echo -e "${YELLOW}2. 同一域名多次申请可能会触发Let's Encrypt官方风控, 请尝试使用脚本菜单的9选项更换证书颁发机构, 再重试申请证书, 或更换域名、或等待7天后再尝试执行脚本${NC}"
+            echo -e "${YELLOW}3. 脚本可能跟不上时代, 建议更换其他脚本${NC}"
             back2menu
         fi
     fi
 }
 
 view_cert(){
-    [[ -z $(~/.acme.sh/acme.sh -v 2>/dev/null) ]] && yellow "未安装acme.sh, 无法执行操作!" && exit 1
+    [[ -z $(~/.acme.sh/acme.sh -v 2>/dev/null) ]] && echo -e "${YELLOW}未安装acme.sh, 无法执行操作!${NC}" && exit 1
     bash ~/.acme.sh/acme.sh --list
     back2menu
 }
 
 renew_cert() {
-    [[ -z $(~/.acme.sh/acme.sh -v 2>/dev/null) ]] && yellow "未安装acme.sh, 无法执行操作!" && exit 1
+    [[ -z $(~/.acme.sh/acme.sh -v 2>/dev/null) ]] && echo -e "${YELLOW}未安装acme.sh, 无法执行操作!${NC}" && exit 1
     bash ~/.acme.sh/acme.sh --list
     read -rp "请输入要续期的域名证书 (复制Main_Domain下显示的域名): " domain
-    [[ -z $domain ]] && red "未输入域名, 无法执行操作!" && exit 1
+    [[ -z $domain ]] && echo -e "${RED}未输入域名, 无法执行操作!${NC}" && exit 1
     if [[ -n $(bash ~/.acme.sh/acme.sh --list | grep $domain) ]]; then
         bash ~/.acme.sh/acme.sh --renew -d ${domain} --force
         checktls
         back2menu
     else
-        red "未找到${domain}的域名证书，请再次检查域名输入正确"
+        echo -e "${RED}未找到${domain}的域名证书，请再次检查域名输入正确${NC}"
         back2menu
     fi
 }
 
 switch_provider(){
-    yellow "请选择证书提供商, 默认通过 Letsencrypt.org 来申请证书 "
-    yellow "如果证书申请失败, 例如一天内通过 Letsencrypt.org 申请次数过多, 可选 BuyPass.com 或 ZeroSSL.com 来申请."
+    echo -e "${YELLOW}请选择证书提供商, 默认通过 Letsencrypt.org 来申请证书 ${NC}"
+    echo -e "${YELLOW}如果证书申请失败, 例如一天内通过 Letsencrypt.org 申请次数过多, 可选 BuyPass.com 或 ZeroSSL.com 来申请.${NC}"
     echo -e " ${GREEN}1.${NC} Letsencrypt.org"
     echo -e " ${GREEN}2.${NC} BuyPass.com"
     echo -e " ${GREEN}3.${NC} ZeroSSL.com"
@@ -356,7 +343,7 @@ switch_provider(){
 }
 
 uninstall() {
-    [[ -z $(~/.acme.sh/acme.sh -v 2>/dev/null) ]] && yellow "未安装Acme.sh, 卸载程序无法执行!" && exit 1
+    [[ -z $(~/.acme.sh/acme.sh -v 2>/dev/null) ]] && echo -e "${YELLOW}未安装Acme.sh, 卸载程序无法执行!${NC}" && exit 1
     ~/.acme.sh/acme.sh --uninstall
     sed -i '/--cron/d' /etc/crontab >/dev/null 2>&1
     rm -rf ~/.acme.sh
