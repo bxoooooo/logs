@@ -156,7 +156,6 @@ acme_standalone(){
     read -rp "请输入证书安装路径: " cert1path
     [[ -z $cert1path ]] && red "未输入证书安装路径，无法执行操作！" && exit 1
     export CERT1PATH="$cert1path"
-    mkdir -p $CERT1PATH
     
     if [[ $domainIP == $ipv6 ]]; then
         bash ~/.acme.sh/acme.sh --issue -d ${domain} --standalone --listen-v6 --insecure
@@ -192,43 +191,9 @@ acme_standalone(){
         fi
     fi
     
-    bash ~/.acme.sh/acme.sh --install-cert -d ${domain} --key-file "$CERT1PATH"/${domain}.key --fullchain-file "$CERT1PATH"/${domain}.crt
-    checktls
-}
-
-acme_cfapiTLD(){
-    [[ -z $(~/.acme.sh/acme.sh -v 2>/dev/null) ]] && red "未安装Acme.sh, 无法执行操作" && exit 1
-    ipv4=$(curl -s4m8 ip.p3terx.com -k | sed -n 1p)
-    ipv6=$(curl -s6m8 ip.p3terx.com -k | sed -n 1p)
-    read -rp "请输入需要申请证书的域名: " domain
-    if [[ $(echo ${domain:0-2}) =~ cf|ga|gq|ml|tk ]]; then
-        red "检测为Freenom免费域名, 由于CloudFlare API不支持, 故无法使用本模式申请!"
-        back2menu
-    fi
-    read -rp "请输入CloudFlare Global API Key: " GAK
-    [[ -z $GAK ]] && red "未输入CloudFlare Global API Key, 无法执行操作!" && exit 1
-    export CF_Key="$GAK"
-    read -rp "请输入CloudFlare的登录邮箱: " CFemail
-    [[ -z $domain ]] && red "未输入CloudFlare的登录邮箱, 无法执行操作!" && exit 1
-    export CF_Email="$CFemail"
-    read -rp "请输入CloudFlare Token: " CTK
-    [[ -z $CTK ]] && red "未输入CloudFlare Token, 无法执行操作！" && exit 1
-    export CF_Token="$CTK"
-    read -rp "请输入CloudFlare Account ID: " ACID
-    [[ -z $ACID ]] && red "未输入CloudFlare Account ID, 无法执行操作！" && exit 1
-    export CF_Account_ID="$ACID"
+    mkdir -p $CERT1PATH/${domain}
     
-    read -rp "请输入证书安装路径: " cert1path
-    [[ -z $cert1path ]] && red "未输入证书安装路径，无法执行操作！" && exit 1
-    export CERT1PATH="$cert1path"
-    mkdir -p $CERT1PATH
-    
-    if [[ -z $ipv4 ]]; then
-        bash ~/.acme.sh/acme.sh --issue --dns dns_cf -d "${domain}" --listen-v6 --insecure
-    else
-        bash ~/.acme.sh/acme.sh --issue --dns dns_cf -d "${domain}" --insecure
-    fi
-    bash ~/.acme.sh/acme.sh --install-cert -d "${domain}" --key-file "$CERT1PATH"/${domain}.key --fullchain-file "$CERT1PATH"/${domain}.crt
+    bash ~/.acme.sh/acme.sh --install-cert -d ${domain} --key-file "$CERT1PATH"/${domain}/key.pem --fullchain-file "$CERT1PATH"/${domain}/cert.pem
     checktls
 }
 
@@ -261,7 +226,6 @@ acme_cfapiNTLD() {
     read -rp "请输入证书安装路径: " cert3path
     [[ -z $cert3path ]] && red "未输入证书安装路径，无法执行操作！" && exit 1
     export CERT3PATH="$cert3path"
-    mkdir -p $CERT3PATH
     
     first_domain="${domains[0]}"
     acme_domains=""
@@ -275,8 +239,10 @@ acme_cfapiNTLD() {
         bash ~/.acme.sh/acme.sh --issue --dns dns_cf --insecure $acme_domains
     fi
 
+    mkdir -p $CERT3PATH/$first_domain
+
     for domain in "${domains[@]}"; do
-        bash ~/.acme.sh/acme.sh --install-cert -d "$first_domain" --domain-alias "$domain" --key-file "$CERT3PATH"/"$first_domain".key --fullchain-file "$CERT3PATH"/"$first_domain".crt
+        bash ~/.acme.sh/acme.sh --install-cert -d "$first_domain" --key-file "$CERT3PATH"/"$first_domain"/key.pem --fullchain-file "$CERT3PATH"/"$first_domain"/cert.pem
 
     done
 
@@ -284,8 +250,8 @@ acme_cfapiNTLD() {
 }
 
 check1tls() {
-    if [[ -f "$CERT3PATH"/"$first_domain".crt && -f "$CERT3PATH"/"$first_domain".key ]]; then
-        if [[ -s "$CERT3PATH"/"$first_domain".crt && -s "$CERT3PATH"/"$first_domain".key ]]; then
+    if [[ -f "$CERT3PATH"/"$first_domain"/cert.pem && -f "$CERT3PATH"/"$first_domain"/key.pem ]]; then
+        if [[ -s "$CERT3PATH"/"$first_domain"/cert.pem && -s "$CERT3PATH"/"$first_domain"/key.pem ]]; then
             if [[ -n $(type -P wg-quick) && -n $(type -P wgcf) ]]; then
                 wg-quick up wgcf >/dev/null 2>&1
             fi
@@ -298,9 +264,9 @@ check1tls() {
             echo $domain > /root/ca.log
             sed -i '/--cron/d' /etc/crontab >/dev/null 2>&1
             echo "0 0 * * * root bash /root/.acme.sh/acme.sh --cron -f >/dev/null 2>&1" >> /etc/crontab
-            green "证书申请成功! 脚本申请到的证书 ("$first_domain".crt) 和私钥 ("$first_domain".key) 文件已保存到 "$CERT3PATH" 文件夹下"
-            yellow "证书crt文件路径如下: "$CERT3PATH"/"$first_domain".crt"
-            yellow "私钥key文件路径如下: "$CERT3PATH"/"$first_domain".key"
+            echo -e "${GREEN}证书申请成功! 脚本申请到的证书 cert.pem 和私钥 key.pem 文件已保存到 "$CERT3PATH"/"$first_domain" 路径下${PLAIN}"
+            echo -e "${GREEN}证书crt文件路径如下: "$CERT3PATH"/"$first_domain"/cert.pem${PLAIN}"
+            echo -e "${GREEN}私钥key文件路径如下: "$CERT3PATH"/"$first_domain"/key.pem${PLAIN}"
             back2menu
         else
             if [[ -n $(type -P wg-quick) && -n $(type -P wgcf) ]]; then
@@ -311,17 +277,16 @@ check1tls() {
             fi
             red "很抱歉，证书申请失败"
             green "建议如下: "
-            yellow "1. 自行检测防火墙是否打开, 如使用80端口申请模式时, 请关闭防火墙或放行80端口"
-            yellow "2. 同一域名多次申请可能会触发Let's Encrypt官方风控, 请尝试使用脚本菜单的9选项更换证书颁发机构, 再重试申请证书, 或更换域名、或等待7天后再尝试执行脚本"
-            yellow "3. 脚本可能跟不上时代, 建议更换其他脚本"
+            yellow "1. 自行检查dns_api信息是否正确"
+            yellow "2. 脚本可能跟不上时代, 建议更换其他脚本"
             back2menu
         fi
     fi
 }
 
 checktls() {
-    if [[ -f "$CERT1PATH"/${domain}.crt && -f "$CERT1PATH"/${domain}.key ]]; then
-        if [[ -s "$CERT1PATH"/${domain}.crt && -s "$CERT1PATH"/${domain}.key ]]; then
+    if [[ -f "$CERT1PATH"/${domain}/cert.pem && -f "$CERT1PATH"/${domain}/key.pem ]]; then
+        if [[ -s "$CERT1PATH"/${domain}/cert.pem && -s "$CERT1PATH"/${domain}/key.pem ]]; then
             if [[ -n $(type -P wg-quick) && -n $(type -P wgcf) ]]; then
                 wg-quick up wgcf >/dev/null 2>&1
             fi
@@ -334,9 +299,9 @@ checktls() {
             echo $domain > /root/ca.log
             sed -i '/--cron/d' /etc/crontab >/dev/null 2>&1
             echo "0 0 * * * root bash /root/.acme.sh/acme.sh --cron -f >/dev/null 2>&1" >> /etc/crontab
-            green "证书申请成功! 脚本申请到的证书 (${domain}.crt) 和私钥 (${domain}.key) 文件已保存到 "$CERT1PATH" 文件夹下"
-            yellow "证书crt文件路径如下: "$CERT1PATH"/${domain}.crt"
-            yellow "私钥key文件路径如下: "$CERT1PATH"/${domain}.key"
+            echo -e "${GREEN}证书申请成功! 脚本申请到的证书 cert.pem 和私钥 key.pem 文件已保存到 "$CERT1PATH"/${domain} 路径下${PLAIN}"
+            echo -e "${GREEN}证书crt文件路径如下: "$CERT1PATH"/${domain}/cert.pem${PLAIN}"
+            echo -e "${GREEN}私钥key文件路径如下: "$CERT1PATH"/${domain}/key.pem${PLAIN}"
             back2menu
         else
             if [[ -n $(type -P wg-quick) && -n $(type -P wgcf) ]]; then
@@ -410,12 +375,11 @@ menu() {
     echo -e " ${GREEN}2.${PLAIN} ${RED}卸载 Acme.sh 域名证书申请脚本${PLAIN}"
     echo " -------------"
     echo -e " ${GREEN}3.${PLAIN} 申请单域名证书 ${YELLOW}(80端口申请)${PLAIN}"
-    echo -e " ${GREEN}4.${PLAIN} 申请单域名证书 ${YELLOW}(CF API申请)${PLAIN} ${GREEN}(无需解析)${PLAIN} ${RED}(不支持freenom域名)${PLAIN}"
-    echo -e " ${GREEN}5.${PLAIN} 申请泛域名证书 ${YELLOW}(CF API申请)${PLAIN} ${GREEN}(无需解析)${PLAIN} ${RED}(不支持freenom域名)${PLAIN}"
+    echo -e " ${GREEN}4.${PLAIN} 申请泛域名证书 ${YELLOW}(CF API申请)${PLAIN} ${GREEN}(无需解析)${PLAIN} ${RED}(不支持freenom域名)${PLAIN}"
     echo " -------------"
-    echo -e " ${GREEN}6.${PLAIN} 查看已申请的证书"
-    echo -e " ${GREEN}7.${PLAIN} 手动续期已申请的证书"
-    echo -e " ${GREEN}8.${PLAIN} 切换证书颁发机构"
+    echo -e " ${GREEN}5.${PLAIN} 查看已申请的证书"
+    echo -e " ${GREEN}6.${PLAIN} 手动续期已申请的证书"
+    echo -e " ${GREEN}7.${PLAIN} 切换证书颁发机构"
     echo " -------------"
     echo -e " ${GREEN}0.${PLAIN} 退出脚本"
     echo ""
@@ -424,11 +388,10 @@ menu() {
         1) install_acme ;;
         2) uninstall ;;
         3) acme_standalone ;;
-        4) acme_cfapiTLD ;;
-        5) acme_cfapiNTLD ;;
-        6) view_cert ;;
-        7) renew_cert ;;
-        8) switch_provider ;;
+        4) acme_cfapiNTLD ;;
+        5) view_cert ;;
+        6) renew_cert ;;
+        7) switch_provider ;;
         *) exit 1 ;;
     esac
 }
