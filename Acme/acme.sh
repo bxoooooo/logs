@@ -204,7 +204,7 @@ acme_cfapiNTLD() {
 
     domains=()
     read -rp "请输入需要申请的域名数量: " domains_count
-    [[ ! $domains_count =~ ^[1-9][0-9]*$ ]] && red "请输入有效的域名数量！" && exit 1
+    [[ ! $domains_count =~ ^[1-99][0-99]*$ ]] && red "请输入有效的域名数量！" && exit 1
     for ((i=1; i<=domains_count; i++)); do
         read -rp "请输入第 $i 个域名 (例如：domain.com): " domain
         domains+=("$domain")
