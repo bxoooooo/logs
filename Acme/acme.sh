@@ -3,8 +3,7 @@
 RED="\033[31m"
 GREEN="\033[32m"
 YELLOW="\033[33m"
-PLAIN='\033[0m'
-
+NC='\033[0m'
 red(){
     echo -e "\033[31m\033[01m$1\033[0m"
 }
@@ -85,7 +84,7 @@ install_acme(){
     bash ~/.acme.sh/acme.sh --upgrade --auto-upgrade
     bash ~/.acme.sh/acme.sh --set-default-ca --server letsencrypt
     if [[ -n $(~/.acme.sh/acme.sh -v 2>/dev/null) ]]; then
-        green "Acme.sh证书申请脚本安装成功!"
+        echo -e "${GREEN}Acme.sh证书申请脚本安装成功!${NC}"
     else
         red "抱歉, Acme.sh证书申请脚本安装失败"
         green "建议如下："
@@ -108,7 +107,7 @@ check_80(){
     sleep 1
     
     if [[  $(lsof -i:"80" | grep -i -c "listen") -eq 0 ]]; then
-        green "检测到目前80端口未被占用"
+        echo -e "${GREEN}检测到目前80端口未被占用${NC}"
         sleep 1
     else
         red "检测到目前80端口被其他程序被占用，以下为占用程序信息"
@@ -140,12 +139,12 @@ acme_standalone(){
     yellow "在使用80端口申请模式时, 请先将您的域名解析至你的VPS的真实IP地址, 否则会导致证书申请失败"
     echo ""
     if [[ -n $ipv4 && -n $ipv6 ]]; then
-        echo -e "VPS的真实IPv4地址为: ${GREEN} $ipv4 ${PLAIN}"
-        echo -e "VPS的真实IPv6地址为: ${GREEN} $ipv6 ${PLAIN}"
+        echo -e "VPS的真实IPv4地址为: ${GREEN} $ipv4 ${NC}"
+        echo -e "VPS的真实IPv6地址为: ${GREEN} $ipv6 ${NC}"
     elif [[ -n $ipv4 && -z $ipv6 ]]; then
-        echo -e "VPS的真实IPv4地址为: ${GREEN} $ipv4 ${PLAIN}"
+        echo -e "VPS的真实IPv4地址为: ${GREEN} $ipv4 ${NC}"
     elif [[ -z $ipv4 && -n $ipv6 ]]; then
-        echo -e "VPS的真实IPv6地址为: ${GREEN} $ipv6 ${PLAIN}"
+        echo -e "VPS的真实IPv6地址为: ${GREEN} $ipv6 ${NC}"
     fi
     echo ""
     read -rp "请输入解析完成的域名: " domain
@@ -264,9 +263,9 @@ check1tls() {
             echo $domain > /root/ca.log
             sed -i '/--cron/d' /etc/crontab >/dev/null 2>&1
             echo "0 0 * * * root bash /root/.acme.sh/acme.sh --cron -f >/dev/null 2>&1" >> /etc/crontab
-            echo -e "${GREEN}证书申请成功! 脚本申请到的证书 cert.pem 和私钥 key.pem 文件已保存到 "$CERT3PATH"/"$first_domain" 路径下${PLAIN}"
-            echo -e "${GREEN}证书crt文件路径如下: "$CERT3PATH"/"$first_domain"/cert.pem${PLAIN}"
-            echo -e "${GREEN}私钥key文件路径如下: "$CERT3PATH"/"$first_domain"/key.pem${PLAIN}"
+            echo -e "${GREEN}证书申请成功! 脚本申请到的证书 cert.pem 和私钥 key.pem 文件已保存到 "$CERT3PATH"/"$first_domain" 路径下${NC}"
+            echo -e "${GREEN}证书crt文件路径如下: "$CERT3PATH"/"$first_domain"/cert.pem${NC}"
+            echo -e "${GREEN}私钥key文件路径如下: "$CERT3PATH"/"$first_domain"/key.pem${NC}"
             back2menu
         else
             if [[ -n $(type -P wg-quick) && -n $(type -P wgcf) ]]; then
@@ -299,9 +298,9 @@ checktls() {
             echo $domain > /root/ca.log
             sed -i '/--cron/d' /etc/crontab >/dev/null 2>&1
             echo "0 0 * * * root bash /root/.acme.sh/acme.sh --cron -f >/dev/null 2>&1" >> /etc/crontab
-            echo -e "${GREEN}证书申请成功! 脚本申请到的证书 cert.pem 和私钥 key.pem 文件已保存到 "$CERT1PATH"/${domain} 路径下${PLAIN}"
-            echo -e "${GREEN}证书crt文件路径如下: "$CERT1PATH"/${domain}/cert.pem${PLAIN}"
-            echo -e "${GREEN}私钥key文件路径如下: "$CERT1PATH"/${domain}/key.pem${PLAIN}"
+            echo -e "${GREEN}证书申请成功! 脚本申请到的证书 cert.pem 和私钥 key.pem 文件已保存到 "$CERT1PATH"/${domain} 路径下${NC}"
+            echo -e "${GREEN}证书crt文件路径如下: "$CERT1PATH"/${domain}/cert.pem${NC}"
+            echo -e "${GREEN}私钥key文件路径如下: "$CERT1PATH"/${domain}/key.pem${NC}"
             back2menu
         else
             if [[ -n $(type -P wg-quick) && -n $(type -P wgcf) ]]; then
@@ -344,14 +343,14 @@ renew_cert() {
 switch_provider(){
     yellow "请选择证书提供商, 默认通过 Letsencrypt.org 来申请证书 "
     yellow "如果证书申请失败, 例如一天内通过 Letsencrypt.org 申请次数过多, 可选 BuyPass.com 或 ZeroSSL.com 来申请."
-    echo -e " ${GREEN}1.${PLAIN} Letsencrypt.org"
-    echo -e " ${GREEN}2.${PLAIN} BuyPass.com"
-    echo -e " ${GREEN}3.${PLAIN} ZeroSSL.com"
+    echo -e " ${GREEN}1.${NC} Letsencrypt.org"
+    echo -e " ${GREEN}2.${NC} BuyPass.com"
+    echo -e " ${GREEN}3.${NC} ZeroSSL.com"
     read -rp "请选择证书提供商 [1-3，默认1]: " provider
     case $provider in
-        2) bash ~/.acme.sh/acme.sh --set-default-ca --server buypass && green "切换证书提供商为 BuyPass.com 成功！" ;;
-        3) bash ~/.acme.sh/acme.sh --set-default-ca --server zerossl && green "切换证书提供商为 ZeroSSL.com 成功！" ;;
-        *) bash ~/.acme.sh/acme.sh --set-default-ca --server letsencrypt && green "切换证书提供商为 Letsencrypt.org 成功！" ;;
+        2) bash ~/.acme.sh/acme.sh --set-default-ca --server buypass && echo -e "${GREEN}切换证书提供商为 BuyPass.com 成功！${NC}" ;;
+        3) bash ~/.acme.sh/acme.sh --set-default-ca --server zerossl && echo -e "${GREEN}切换证书提供商为 ZeroSSL.com 成功！${NC}" ;;
+        *) bash ~/.acme.sh/acme.sh --set-default-ca --server letsencrypt && echo -e "${GREEN}切换证书提供商为 Letsencrypt.org 成功！${NC}" ;;
     esac
     back2menu
 }
@@ -361,27 +360,27 @@ uninstall() {
     ~/.acme.sh/acme.sh --uninstall
     sed -i '/--cron/d' /etc/crontab >/dev/null 2>&1
     rm -rf ~/.acme.sh
-    green "Acme  一键申请证书脚本已彻底卸载!"
+    echo -e "${GREEN}Acme  一键申请证书脚本已彻底卸载!${NC}"
 }
 
 menu() {
     clear
     echo "#############################################################"
-    echo -e "#                     ${RED}Acme证书一键申请脚本${PLAIN}                  #"
-    echo -e "#                     ${GREEN}作者${PLAIN}: 你挺能闹啊☁️                    #"
+    echo -e "#                     ${RED}Acme证书一键申请脚本${NC}                  #"
+    echo -e "#                     ${GREEN}作者${NC}: 你挺能闹啊☁️                    #"
     echo "#############################################################"
     echo ""
-    echo -e " ${GREEN}1.${PLAIN} 安装 Acme.sh 域名证书申请脚本"
-    echo -e " ${GREEN}2.${PLAIN} ${RED}卸载 Acme.sh 域名证书申请脚本${PLAIN}"
+    echo -e " ${GREEN}1.${NC} 安装 Acme.sh 域名证书申请脚本"
+    echo -e " ${GREEN}2.${NC} ${RED}卸载 Acme.sh 域名证书申请脚本${NC}"
     echo " -------------"
-    echo -e " ${GREEN}3.${PLAIN} 申请单域名证书 ${YELLOW}(80端口申请)${PLAIN}"
-    echo -e " ${GREEN}4.${PLAIN} 申请泛域名证书 ${YELLOW}(CF API申请)${PLAIN} ${GREEN}(无需解析)${PLAIN} ${RED}(不支持freenom域名)${PLAIN}"
+    echo -e " ${GREEN}3.${NC} 申请单域名证书 ${YELLOW}(80端口申请)${NC}"
+    echo -e " ${GREEN}4.${NC} 申请泛域名证书 ${YELLOW}(CF API申请)${NC} ${GREEN}(无需解析)${NC} ${RED}(不支持freenom域名)${NC}"
     echo " -------------"
-    echo -e " ${GREEN}5.${PLAIN} 查看已申请的证书"
-    echo -e " ${GREEN}6.${PLAIN} 手动续期已申请的证书"
-    echo -e " ${GREEN}7.${PLAIN} 切换证书颁发机构"
+    echo -e " ${GREEN}5.${NC} 查看已申请的证书"
+    echo -e " ${GREEN}6.${NC} 手动续期已申请的证书"
+    echo -e " ${GREEN}7.${NC} 切换证书颁发机构"
     echo " -------------"
-    echo -e " ${GREEN}0.${PLAIN} 退出脚本"
+    echo -e " ${GREEN}0.${NC} 退出脚本"
     echo ""
     read -rp "请输入选项 [0-9]: " NumberInput
     case "$NumberInput" in
