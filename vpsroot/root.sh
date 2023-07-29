@@ -13,10 +13,10 @@ lsattr /etc/passwd /etc/shadow >/dev/null 2>&1
 prl=`grep PermitRootLogin /etc/ssh/sshd_config`
 pa=`grep PasswordAuthentication /etc/ssh/sshd_config`
 if [[ -n $prl && -n $pa ]]; then
-        read -p "请输入端口号（默认为 22）：" sshport
+        read -p "请设置ssh端口号（默认为 22）：" sshport
         sshport=${sshport:-22} # 如果用户没有输入，则使用默认值22
 
-        read -p "请输入密码：" password
+        read -p "请设置root密码：" password
         # 如果用户没有输入密码，则设置一个随机密码
         if [ -z "$password" ]; then
                 password=$(openssl rand -base64 12)
